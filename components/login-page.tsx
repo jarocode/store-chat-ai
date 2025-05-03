@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import styled from "styled-components"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { ModeToggle } from "./mode-toggle"
-import { LogIn } from "lucide-react"
-import Logo from "./logo"
+import { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { ModeToggle } from "./mode-toggle";
+import { LogIn } from "lucide-react";
+import Logo from "./logo";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -21,7 +21,7 @@ const LoginContainer = styled.div`
   color: ${(props) => props.theme.colors.text};
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: "";
     position: absolute;
@@ -29,11 +29,15 @@ const LoginContainer = styled.div`
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 50% 0%, ${(props) => props.theme.colors.primaryLight}, transparent 70%);
+    background: radial-gradient(
+      circle at 50% 0%,
+      ${(props) => props.theme.colors.primaryLight},
+      transparent 70%
+    );
     opacity: 0.6;
     z-index: 0;
   }
-`
+`;
 
 const LoginCard = styled(motion.div)`
   width: 100%;
@@ -49,45 +53,45 @@ const LoginCard = styled(motion.div)`
   box-shadow: ${(props) => props.theme.shadows.elevated};
   backdrop-filter: blur(10px);
   border: 1px solid ${(props) => props.theme.colors.border};
-  
+
   @media (max-width: 640px) {
     padding: 2rem 1.5rem;
   }
-`
+`;
 
 const LogoWrapper = styled.div`
   margin-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-`
+`;
 
 const Tagline = styled.p`
   font-size: 1rem;
   color: ${(props) => props.theme.colors.textMuted};
   margin-bottom: 2.5rem;
   text-align: center;
-`
+`;
 
 const Form = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-`
+`;
 
 const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
-`
+`;
 
 const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
   color: ${(props) => props.theme.colors.text};
-`
+`;
 
 const Input = styled.input`
   padding: 0.875rem 1rem;
@@ -105,7 +109,7 @@ const Input = styled.input`
     border-color: ${(props) => props.theme.colors.primary};
     box-shadow: ${(props) => props.theme.shadows.highlight};
   }
-`
+`;
 
 const Button = styled(motion.button)`
   padding: 0.875rem 1.5rem;
@@ -135,14 +139,14 @@ const Button = styled(motion.button)`
     transform: none;
     box-shadow: none;
   }
-`
+`;
 
 const ThemeToggleWrapper = styled.div`
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
   z-index: 10;
-`
+`;
 
 const Decorations = styled.div`
   position: absolute;
@@ -153,9 +157,14 @@ const Decorations = styled.div`
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-`
+`;
 
-const Circle = styled.div<{ size: number; top: string; left: string; color: string }>`
+const Circle = styled.div<{
+  size: number;
+  top: string;
+  left: string;
+  color: string;
+}>`
   position: absolute;
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
@@ -164,31 +173,35 @@ const Circle = styled.div<{ size: number; top: string; left: string; color: stri
   top: ${(props) => props.top};
   left: ${(props) => props.left};
   opacity: 0.1;
-`
+`;
 
 export default function LoginPage() {
-  const [storeUrl, setStoreUrl] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const router = useRouter()
+  const [storeUrl, setStoreUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   // Prevent hydration mismatch
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
-    // In a real app, this would redirect to Shopify OAuth
-    // For demo purposes, we'll simulate the auth flow
-    setTimeout(() => {
-      router.push("/onboarding")
-    }, 1000) // Reduced from 1500ms to 1000ms for faster response
-  }
+    // setTimeout(() => {
+    //   router.push("/onboarding")
+    // }, 1000)
 
-  if (!mounted) return null
+    const storeHostName = new URL(storeUrl).host;
+
+    // kick off OAuth by redirecting to your NestJS endpoint
+
+    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/shopify?shop=${storeHostName}`;
+  };
+
+  if (!mounted) return null;
 
   return (
     <LoginContainer>
@@ -210,7 +223,9 @@ export default function LoginPage() {
         <LogoWrapper>
           <Logo size="large" />
         </LogoWrapper>
-        <Tagline>Connect your store to create an AI-powered shopping assistant</Tagline>
+        <Tagline>
+          Connect your store to create an AI-powered shopping assistant
+        </Tagline>
 
         <Form onSubmit={handleSubmit}>
           <InputGroup>
@@ -220,7 +235,7 @@ export default function LoginPage() {
               type="text"
               placeholder="yourstore.myshopify.com"
               value={storeUrl}
-              onChange={(e) => setStoreUrl(e.target.value)}
+              onChange={(e) => setStoreUrl(e.target.value.trim())}
               required
             />
           </InputGroup>
@@ -235,7 +250,11 @@ export default function LoginPage() {
               <>
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ repeat: Number.POSITIVE_INFINITY, duration: 0.8, ease: "linear" }} // Faster animation
+                  transition={{
+                    repeat: Number.POSITIVE_INFINITY,
+                    duration: 0.8,
+                    ease: "linear",
+                  }} // Faster animation
                 >
                   <LogIn size={20} />
                 </motion.div>
@@ -251,6 +270,5 @@ export default function LoginPage() {
         </Form>
       </LoginCard>
     </LoginContainer>
-  )
+  );
 }
-
