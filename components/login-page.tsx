@@ -190,15 +190,11 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // setTimeout(() => {
-    //   router.push("/onboarding")
-    // }, 1000)
-
     const storeHostName = new URL(storeUrl).host;
 
     // kick off OAuth by redirecting to your NestJS endpoint
-
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/shopify?shop=${storeHostName}`;
+    setIsLoading(false);
   };
 
   if (!mounted) return null;
