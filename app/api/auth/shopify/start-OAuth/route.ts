@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 export async function GET(req: NextRequest) {
   const shop = req.nextUrl.searchParams.get("shop");
   if (!shop) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   // 1. generate a random state

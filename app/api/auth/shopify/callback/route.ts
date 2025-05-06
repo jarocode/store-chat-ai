@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code")!;
   const state = url.searchParams.get("state")!;
   const hmac = url.searchParams.get("hmac")!;
+  const timestamp = url.searchParams.get("timestamp")!;
 
   // validate our one-time state cookie
   const cookieState = request.cookies.get("shopify_state")?.value;
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         Cookie: request.headers.get("cookie") || "",
       },
-      body: JSON.stringify({ shop, code, state, hmac }),
+      body: JSON.stringify({ shop, code, state, hmac, timestamp }),
     }
   );
   if (!proxy.ok) {
