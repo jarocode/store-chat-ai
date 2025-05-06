@@ -1,6 +1,5 @@
 // lib/api.ts
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { cookies } from "next/headers";
 
 const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -45,6 +44,8 @@ export async function apiRequest<T = any>(
   try {
     // AUTO-FORWARD COOKIE on Server
     if (typeof window === "undefined") {
+      // dynamic import so Webpack won’t turn this file into a pure-ServerComponent
+      const { cookies } = await import("next/headers");
       const jwt = (await cookies()).get("jwt")?.value;
       if (jwt) {
         options.headers = {
