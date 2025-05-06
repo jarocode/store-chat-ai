@@ -3,11 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
-  const shop = url.searchParams.get("shop")!;
-  const code = url.searchParams.get("code")!;
-  const state = url.searchParams.get("state")!;
-  const hmac = url.searchParams.get("hmac")!;
-  const timestamp = url.searchParams.get("timestamp")!;
+  // collect all Shopify’s callback params
+  const dto: Record<string, string> = {};
+  for (const [key, value] of url.searchParams) {
+    dto[key] = value;
+  }
+
+  const { state } = dto;
 
   // validate our one-time state cookie
   const cookieState = request.cookies.get("shopify_state")?.value;
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
         Cookie: request.headers.get("cookie") || "",
       },
-      body: JSON.stringify({ shop, code, state, hmac, timestamp }),
+      body: JSON.stringify(dto),
     }
   );
   if (!proxy.ok) {
