@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   // validate our one-time state cookie
   const cookieState = request.cookies.get("shopify_state")?.value;
   if (!cookieState || cookieState !== state) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   // build the response early so we can delete the state cookie
@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
   });
 
   // proxy to NestJS, etc...
+  console.log("fetching jwt from Nestjs server");
   const proxy = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/shopify/callback-proxy`,
     {
@@ -39,6 +40,8 @@ export async function GET(request: NextRequest) {
     console.error("Callback-proxy error:", await proxy.text());
     return NextResponse.redirect(new URL("/", request.url));
   }
+
+  console.log("jwt retrieved from Nestjs server! ");
 
   const { jwt } = await proxy.json();
   response.cookies.set("jwt", jwt, {

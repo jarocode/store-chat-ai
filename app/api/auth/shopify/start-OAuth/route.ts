@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const state = uuid();
 
   // 2. set it in an httpOnly cookie on your domain
+  console.log("Redirecting to shopify's '/oauth/authorize' endpoint");
   const res = NextResponse.redirect(
     `https://${shop}/admin/oauth/authorize?${new URLSearchParams({
       client_id: process.env.SHOPIFY_CLIENT_ID!,
@@ -20,6 +21,7 @@ export async function GET(req: NextRequest) {
       state,
     }).toString()}`
   );
+  console.log("setting httpOnly cookie for state verification");
   res.cookies.set("shopify_state", state, {
     httpOnly: true,
     // secure: process.env.NODE_ENV === "production",

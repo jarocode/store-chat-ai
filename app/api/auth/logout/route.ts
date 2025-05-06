@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   // });
 
   // --- clear the cookie on THIS domain ---
-  const res = NextResponse.redirect(new URL("/login", req.url));
+  const res = NextResponse.redirect(new URL("/", req.url));
   res.cookies.set("jwt", "", {
     maxAge: 0,
     path: "/",
