@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useMemo } from "react"
-import styled from "styled-components"
-import { usePathname } from "next/navigation"
-import Sidebar from "@/components/dashboard/sidebar"
-import Header from "@/components/dashboard/header"
+import { useState, useEffect, useMemo } from "react";
+import styled from "styled-components";
+import { usePathname } from "next/navigation";
+import Sidebar from "@/components/dashboard/sidebar";
+import Header from "@/components/dashboard/header";
 
 const DashboardContainer = styled.div`
   display: flex;
   min-height: 100vh;
   background: ${(props) => props.theme.colors.background};
   color: ${(props) => props.theme.colors.text};
-`
+`;
 
 const MainContent = styled.main<{ $sidebarOpen: boolean }>`
   flex: 1;
@@ -29,52 +29,55 @@ const MainContent = styled.main<{ $sidebarOpen: boolean }>`
     margin-left: ${(props) => (props.$sidebarOpen ? "280px" : "0")};
     padding-right: 2rem; /* Add gap from the right side */
   }
-`
+`;
 
 const ContentWrapper = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
-`
+`;
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [mounted, setMounted] = useState(false)
-  const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   // Prevent hydration mismatch
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
 
     // Close sidebar on mobile by default
     const handleResize = () => {
       if (window.innerWidth < 1024) {
-        setSidebarOpen(false)
+        setSidebarOpen(false);
       } else {
-        setSidebarOpen(true)
+        setSidebarOpen(true);
       }
-    }
+    };
 
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
-  }, [])
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Close sidebar when navigating on mobile
   useEffect(() => {
     if (window.innerWidth < 1024) {
-      setSidebarOpen(false)
+      setSidebarOpen(false);
     }
-  }, [pathname])
+  }, [pathname]);
 
   // Memoize the sidebar component to prevent unnecessary re-renders
-  const sidebarComponent = useMemo(() => <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />, [sidebarOpen])
+  const sidebarComponent = useMemo(
+    () => <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />,
+    [sidebarOpen]
+  );
 
-  if (!mounted) return null
+  if (!mounted) return null;
 
   return (
     <DashboardContainer>
@@ -84,6 +87,5 @@ export default function DashboardLayout({
         <ContentWrapper>{children}</ContentWrapper>
       </MainContent>
     </DashboardContainer>
-  )
+  );
 }
-
