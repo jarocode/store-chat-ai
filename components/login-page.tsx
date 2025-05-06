@@ -193,8 +193,11 @@ export default function LoginPage() {
 
     const storeHostName = new URL(storeUrl).host;
 
-    // kick off OAuth by redirecting to your NestJS endpoint
-    window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/shopify?shop=${storeHostName}`;
+    // Redirect into your Next.js BFF start endpoint
+    // which sets `shopify_state` then forwards to Shopify
+    window.location.href = `/api/auth/shopify/start-OAuth?shop=${encodeURIComponent(
+      storeHostName
+    )}`;
   };
 
   if (!mounted) return null;
