@@ -5,7 +5,7 @@ import { apiRequest } from "./api";
 export async function requireAuth(): Promise<string> {
   try {
     const { shop } = await apiRequest<{ shop: string }>({
-      url: "/shops/me",
+      url: "/shop/me",
       method: "get",
     });
     return shop;

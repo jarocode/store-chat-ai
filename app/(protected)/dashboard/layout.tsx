@@ -37,7 +37,7 @@ const ContentWrapper = styled.div`
   width: 100%;
 `;
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
