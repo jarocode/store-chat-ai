@@ -4,10 +4,11 @@ import type React from "react";
 
 import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ModeToggle } from "./mode-toggle";
 import { LogIn } from "lucide-react";
+
+import { ModeToggle } from "./mode-toggle";
+
 import Logo from "./logo";
 
 const LoginContainer = styled.div`
@@ -179,11 +180,11 @@ export default function LoginPage() {
   const [storeUrl, setStoreUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
+    setIsLoading(false);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -194,7 +195,6 @@ export default function LoginPage() {
 
     // kick off OAuth by redirecting to your NestJS endpoint
     window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/shopify?shop=${storeHostName}`;
-    setIsLoading(false);
   };
 
   if (!mounted) return null;
