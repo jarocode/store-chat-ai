@@ -10,6 +10,7 @@ export async function requireAuth(): Promise<string> {
     });
     return shop;
   } catch (err) {
+    console.error("error accessing protected page:", err);
     // on any error (incl. 401) reroute to login
     // redirect("/login");
     redirect("/");
