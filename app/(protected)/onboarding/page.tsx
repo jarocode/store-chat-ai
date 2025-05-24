@@ -280,6 +280,7 @@ export default function OnboardingPage() {
         url: "/shop/me",
         method: "get",
       });
+      console.log("shop data:", resp.shop);
       setShop(resp.shop);
       setCurrentStep(2);
       setStatusText("Importing your products and customers...");
