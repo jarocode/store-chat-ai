@@ -1,3 +1,4 @@
+// app/onboarding/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +9,7 @@ import { CheckCircle2 } from "lucide-react";
 
 import { apiRequest } from "@/lib/api";
 
+// ----- Styled Components -----
 const OnboardingContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -15,8 +17,8 @@ const OnboardingContainer = styled.div`
   justify-content: center;
   min-height: 100vh;
   padding: 1.5rem;
-  background: ${(props) => props.theme.colors.background};
-  color: ${(props) => props.theme.colors.text};
+  background: ${({ theme }) => theme.colors.background};
+  color: ${({ theme }) => theme.colors.text};
   position: relative;
   overflow: hidden;
 
@@ -29,7 +31,7 @@ const OnboardingContainer = styled.div`
     height: 100%;
     background: radial-gradient(
       circle at 50% 0%,
-      ${(props) => props.theme.colors.primaryLight},
+      ${({ theme }) => theme.colors.primaryLight},
       transparent 70%
     );
     opacity: 0.6;
@@ -41,17 +43,17 @@ const OnboardingCard = styled(motion.div)`
   width: 100%;
   max-width: 600px;
   padding: 3rem;
-  border-radius: ${(props) => props.theme.radii.xl};
-  background: ${(props) => props.theme.colors.card};
+  border-radius: ${({ theme }) => theme.radii.xl};
+  background: ${({ theme }) => theme.colors.card};
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   position: relative;
   z-index: 1;
-  box-shadow: ${(props) => props.theme.shadows.elevated};
+  box-shadow: ${({ theme }) => theme.shadows.elevated};
   backdrop-filter: blur(10px);
-  border: 1px solid ${(props) => props.theme.colors.border};
+  border: 1px solid ${({ theme }) => theme.colors.border};
 
   @media (max-width: 640px) {
     padding: 2rem 1.5rem;
@@ -62,14 +64,14 @@ const Title = styled.h1`
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
-  color: ${(props) => props.theme.colors.text};
-  font-family: ${(props) => props.theme.fonts.heading};
+  color: ${({ theme }) => theme.colors.text};
+  font-family: ${({ theme }) => theme.fonts.heading};
   letter-spacing: -0.02em;
 `;
 
 const Subtitle = styled.p`
   font-size: 1rem;
-  color: ${(props) => props.theme.colors.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
   margin-bottom: 3rem;
   max-width: 400px;
 `;
@@ -77,19 +79,19 @@ const Subtitle = styled.p`
 const ProgressBarContainer = styled.div`
   width: 100%;
   height: 8px;
-  background: ${(props) => props.theme.colors.progressBarBackground};
-  border-radius: ${(props) => props.theme.radii.full};
+  background: ${({ theme }) => theme.colors.progressBarBackground};
+  border-radius: ${({ theme }) => theme.radii.full};
   margin-bottom: 2rem;
   overflow: hidden;
   position: relative;
-  box-shadow: ${(props) => props.theme.shadows.sm};
+  box-shadow: ${({ theme }) => theme.shadows.sm};
 `;
 
 const ProgressBarFill = styled(motion.div)`
   height: 100%;
-  background: ${(props) => props.theme.colors.primaryGradient};
-  border-radius: ${(props) => props.theme.radii.full};
-  box-shadow: 0 0 8px ${(props) => props.theme.colors.primary};
+  background: ${({ theme }) => theme.colors.primaryGradient};
+  border-radius: ${({ theme }) => theme.radii.full};
+  box-shadow: 0 0 8px ${({ theme }) => theme.colors.primary};
 `;
 
 const StepContainer = styled.div`
@@ -106,7 +108,7 @@ const StepContainer = styled.div`
     left: 0;
     right: 0;
     height: 2px;
-    background: ${(props) => props.theme.colors.border};
+    background: ${({ theme }) => theme.colors.border};
     z-index: 0;
   }
 
@@ -135,26 +137,20 @@ const Step = styled.div<{ $active: boolean; $completed: boolean }>`
     justify-content: center;
     font-weight: 600;
     font-size: 0.875rem;
-    background: ${(props) =>
-      props.$completed
-        ? props.theme.colors.primary
-        : props.$active
-        ? props.theme.colors.card
-        : props.theme.colors.card};
-    color: ${(props) =>
-      props.$completed
-        ? "white"
-        : props.$active
-        ? props.theme.colors.primary
-        : props.theme.colors.textMuted};
-    transition: all ${(props) => props.theme.transitions.normal};
+    background: ${({ $completed, theme }) =>
+      $completed ? theme.colors.primary : theme.colors.card};
+    color: ${({ $completed, $active, theme }) =>
+      $completed
+        ? "#fff"
+        : $active
+        ? theme.colors.primary
+        : theme.colors.textMuted};
+    transition: all ${({ theme }) => theme.transitions.normal};
     border: 2px solid
-      ${(props) =>
-        props.$completed || props.$active
-          ? props.theme.colors.primary
-          : props.theme.colors.border};
-    box-shadow: ${(props) =>
-      props.$completed || props.$active ? props.theme.shadows.md : "none"};
+      ${({ $completed, $active, theme }) =>
+        $completed || $active ? theme.colors.primary : theme.colors.border};
+    box-shadow: ${({ $completed, $active, theme }) =>
+      $completed || $active ? theme.shadows.md : "none"};
 
     @media (max-width: 640px) {
       width: 24px;
@@ -165,12 +161,10 @@ const Step = styled.div<{ $active: boolean; $completed: boolean }>`
 
   .step-label {
     font-size: 0.875rem;
-    color: ${(props) =>
-      props.$completed || props.$active
-        ? props.theme.colors.text
-        : props.theme.colors.textMuted};
-    font-weight: ${(props) =>
-      props.$completed || props.$active ? "600" : "400"};
+    color: ${({ $completed, $active, theme }) =>
+      $completed || $active ? theme.colors.text : theme.colors.textMuted};
+    font-weight: ${({ $completed, $active }) =>
+      $completed || $active ? "600" : "400"};
     text-align: center;
 
     @media (max-width: 640px) {
@@ -183,7 +177,7 @@ const StatusText = styled.div`
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: ${(props) => props.theme.colors.primary};
+  color: ${({ theme }) => theme.colors.primary};
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -210,99 +204,142 @@ const StatusText = styled.div`
 
 const PulsingText = styled(motion.div)`
   font-size: 0.875rem;
-  color: ${(props) => props.theme.colors.textMuted};
+  color: ${({ theme }) => theme.colors.textMuted};
 
   @media (min-width: 640px) {
     font-size: 1rem;
   }
 `;
 
+const RetryButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: ${({ theme }) => theme.colors.primary};
+  color: #fff;
+  border: none;
+  border-radius: ${({ theme }) => theme.radii.md};
+  font-weight: 600;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+// ----- Constants & Steps -----
 const steps = [
   { id: 1, label: "Connect" },
   { id: 2, label: "Import Data" },
   { id: 3, label: "Setup AI" },
   { id: 4, label: "Complete" },
 ];
+const MAX_RETRIES = 3;
+const BASE_DELAY = 500; // ms
 
+// ----- Component -----
 export default function OnboardingPage() {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(1);
   const [statusText, setStatusText] = useState(
     "Connecting to your Shopify store..."
   );
-  const [mounted, setMounted] = useState(false);
+  const [shop, setShop] = useState("");
+  const [connectError, setConnectError] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const router = useRouter();
 
-  const getShop = async () => {
-    const { shop } = await apiRequest<{ shop: string }>({
-      url: "/shop/me",
-      method: "get",
-    });
-    console.log("shop", shop);
+  // Exponential-backoff retry helper
+  const retryApiRequest = async <T,>(
+    options: Parameters<typeof apiRequest>[0],
+    retries = MAX_RETRIES,
+    delay = BASE_DELAY
+  ): Promise<T> => {
+    try {
+      return await apiRequest<T>(options);
+    } catch (err) {
+      if (retries > 0) {
+        setStatusText(
+          `Error: ${
+            err instanceof Error ? err.message : "Request failed"
+          }, retrying...`
+        );
+        await new Promise((r) => setTimeout(r, delay));
+        return retryApiRequest<T>(options, retries - 1, delay * 2);
+      }
+      throw err;
+    }
   };
 
-  console.log("shop");
+  // Initiate connection & ingestion
+  const initiateConnect = async () => {
+    setConnectError(false);
+    setIsRetrying(true);
+    setStatusText("Connecting to your Shopify store...");
+    try {
+      const resp = await retryApiRequest<{ shop: string }>({
+        url: "/shop/me",
+        method: "get",
+      });
+      setShop(resp.shop);
+      setCurrentStep(2);
+      setStatusText("Importing your products and customers...");
+      await retryApiRequest({
+        url: "/shopify/ingest/all",
+        method: "post",
+        data: { shop: resp.shop },
+      });
+    } catch {
+      setConnectError(true);
+      setStatusText("Failed to connect after multiple attempts.");
+    } finally {
+      setIsRetrying(false);
+    }
+  };
 
-  // Prevent hydration mismatch
+  // Kick off on mount
   useEffect(() => {
-    setMounted(true);
-    getShop();
+    initiateConnect();
   }, []);
 
+  // Poll ingestion status
   useEffect(() => {
-    if (!mounted) return;
+    if (!shop || connectError) return;
+    const iv = setInterval(async () => {
+      try {
+        const data = await retryApiRequest<
+          Record<string, { done: number; total: number }>
+        >({ url: "/shopify/ingest/status", method: "post", data: { shop } });
+        console.log("ingest status data:", data);
+        const entries = Object.values(data);
+        const total = entries.reduce((s, e) => s + e.total, 0);
+        const done = entries.reduce((s, e) => s + e.done, 0);
+        setProgress(total > 0 ? Math.round((done / total) * 100) : 0);
 
-    const simulateOnboarding = async () => {
-      // Step 1: Connect
-      await simulateStep(0, 25, "Connecting to your Shopify store...", 1);
-
-      // Step 2: Import Data
-      await simulateStep(25, 60, "Importing your products and customers...", 2);
-
-      // Step 3: Setup AI
-      await simulateStep(60, 90, "Setting up your AI chatbot...", 3);
-
-      // Step 4: Complete
-      await simulateStep(90, 100, "Almost done...", 4);
-
-      // Redirect to dashboard
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 800); // Faster redirect
-    };
-
-    simulateOnboarding();
-  }, [router, mounted]);
-
-  const simulateStep = (
-    start: number,
-    end: number,
-    status: string,
-    step: number
-  ) => {
-    return new Promise<void>((resolve) => {
-      setStatusText(status);
-      setCurrentStep(step);
-
-      const duration = 1500; // 1.5 seconds per step (faster)
-      const interval = 50; // Update every 50ms
-      const steps = duration / interval;
-      const increment = (end - start) / steps;
-
-      let current = start;
-      const timer = setInterval(() => {
-        current += increment;
-        setProgress(Math.min(current, end));
-
-        if (current >= end) {
-          clearInterval(timer);
-          resolve();
+        if (
+          ["products", "orders", "customers", "discounts"].every(
+            (r) => data[r]?.done === data[r]?.total
+          ) &&
+          currentStep < 3
+        ) {
+          setCurrentStep(3);
+          setStatusText("Setting up your AI chatbot...");
         }
-      }, interval);
-    });
-  };
-
-  if (!mounted) return null;
+        if (
+          ["faqPages", "shopPolicies", "productFaqs", "blogArticles"].every(
+            (r) => data[r]?.done === data[r]?.total
+          ) &&
+          currentStep < 4
+        ) {
+          setCurrentStep(4);
+          setStatusText("Almost done...");
+          setTimeout(() => router.push("/dashboard"), 800);
+        }
+      } catch {
+        setStatusText("Error fetching progress, retrying...");
+      }
+    }, 2000);
+    return () => clearInterval(iv);
+  }, [shop, connectError, currentStep, router]);
 
   return (
     <OnboardingContainer>
@@ -341,29 +378,23 @@ export default function OnboardingPage() {
 
         <StatusText>
           <motion.div
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              repeat: Number.POSITIVE_INFINITY,
-              duration: 1.5,
-              ease: "linear",
-            }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
           >
             ⚙️
           </motion.div>
           {statusText}
         </StatusText>
 
+        {connectError && (
+          <RetryButton onClick={initiateConnect} disabled={isRetrying}>
+            {isRetrying ? "Retrying..." : "Retry Connection"}
+          </RetryButton>
+        )}
+
         <PulsingText
-          animate={{
-            opacity: [0.5, 1, 0.5],
-            scale: [0.98, 1, 0.98],
-          }}
-          transition={{
-            repeat: Number.POSITIVE_INFINITY,
-            duration: 2,
-          }}
+          animate={{ opacity: [0.5, 1, 0.5], scale: [0.98, 1, 0.98] }}
+          transition={{ repeat: Infinity, duration: 2 }}
         >
           Please don't close this window
         </PulsingText>

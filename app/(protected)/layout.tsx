@@ -7,6 +7,7 @@ export default async function ProtectedLayout({
 }: {
   children: ReactNode;
 }) {
-  const shop = await requireAuth(); // runs once for ALL nested routes
+  await requireAuth(); // runs once for ALL nested routes
+
   return <div>{children}</div>;
 }
