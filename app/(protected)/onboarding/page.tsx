@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
 import { apiRequest } from "@/lib/api";
+import { useShop } from "../context/shop-context";
 
 // ----- Styled Components -----
 const OnboardingContainer = styled.div`
@@ -276,18 +277,15 @@ export default function OnboardingPage() {
     setIsRetrying(true);
     setStatusText("Connecting to your Shopify store...");
     try {
-      const resp = await retryApiRequest<{ shop: string }>({
-        url: "/shop/me",
-        method: "get",
-      });
-      console.log("shop data:", resp.shop);
-      setShop(resp.shop);
+      const shop = useShop();
+      console.log("shop data:", shop);
+      setShop(shop);
       setCurrentStep(2);
       setStatusText("Importing your products and customers...");
       await retryApiRequest({
         url: "/shopify/ingest/all",
         method: "post",
-        data: { shop: resp.shop },
+        data: { shop },
       });
     } catch {
       setConnectError(true);
