@@ -248,6 +248,7 @@ export default function OnboardingPage() {
   const [connectError, setConnectError] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const router = useRouter();
+  const shopLink = useShop();
 
   // Exponential-backoff retry helper
   const retryApiRequest = async <T,>(
@@ -278,16 +279,15 @@ export default function OnboardingPage() {
     setIsRetrying(true);
     setStatusText("Connecting to your Shopify store...");
     try {
-      const shop = useShop();
-      console.log("shop data:", shop);
-      setShop(shop);
+      console.log("shop data:", shopLink);
+      setShop(shopLink);
       setCurrentStep(2);
       setStatusText("Importing your products and customers...");
       console.log("trying to ingest...");
       await retryApiRequest({
         url: "/shopify/ingest/all",
         method: "post",
-        data: { shop },
+        data: { shop: shopLink },
       });
     } catch (error) {
       console.log("connect error:", error);
