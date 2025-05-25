@@ -273,6 +273,7 @@ export default function OnboardingPage() {
 
   // Initiate connection & ingestion
   const initiateConnect = async () => {
+    console.log("connect initiated...");
     setConnectError(false);
     setIsRetrying(true);
     setStatusText("Connecting to your Shopify store...");
@@ -282,12 +283,14 @@ export default function OnboardingPage() {
       setShop(shop);
       setCurrentStep(2);
       setStatusText("Importing your products and customers...");
+      console.log("trying to ingest...");
       await retryApiRequest({
         url: "/shopify/ingest/all",
         method: "post",
         data: { shop },
       });
-    } catch {
+    } catch (error) {
+      console.log("connect error:", error);
       setConnectError(true);
       setStatusText("Failed to connect after multiple attempts.");
     } finally {
